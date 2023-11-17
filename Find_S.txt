@@ -1,0 +1,29 @@
+import pandas as pd
+
+def find_s_algorithm(training_data):
+    # Initialize the hypothesis to the most specific hypothesis
+    hypothesis = [None] * (len(training_data[0]) - 1)
+
+    # Iterate through each training example
+    for example in training_data:
+        if example[-1] == 'Yes':  # Consider positive examples only
+            for i in range(len(example) - 1):
+                if hypothesis[i] is None:
+                    hypothesis[i] = example[i]
+                elif hypothesis[i] != example[i]:
+                    hypothesis[i] = '?'
+
+    return hypothesis
+
+# Example usage
+training_data = [
+    ['Sunny', 'Warm', 'Normal', 'Strong', 'Warm', 'Same', 'Yes'],
+    ['Sunny', 'Warm', 'High', 'Strong', 'Warm', 'Same', 'Yes'],
+    ['Rainy', 'Cold', 'High', 'Strong', 'Warm', 'Change', 'No'],
+    ['Sunny', 'Warm', 'High', 'Strong', 'Cool', 'Change', 'Yes']
+]
+
+hypothesis = find_s_algorithm(training_data)
+
+# Print the final hypothesis
+print("Final Hypothesis:", hypothesis)

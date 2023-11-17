@@ -1,0 +1,61 @@
+import numpy as np
+import pandas as pd
+
+def euclidean_distance(point1, point2):
+    return np.sqrt(np.sum((np.array(point1) - np.array(point2)) ** 2))
+
+
+def assign_to_clusters(data, centroids):
+    clusters = {key: [] for key in centroids.keys()}
+
+    for point in data:
+        distances = [euclidean_distance(point, centroids[centroid]) for centroid in centroids]
+        min_distance_index = np.argmin(distances)
+        closest_centroid = list(centroids.keys())[min_distance_index]
+        clusters[closest_centroid].append(point)
+
+    return clusters
+
+
+def update_centroids(clusters):
+    new_centroids = {}
+    for centroid, points in clusters.items():
+        if points:
+            new_centroid = np.mean(points, axis=0)
+            new_centroids[centroid] = new_centroid.tolist()
+        else:
+            new_centroids[centroid] = centroids[centroid]  # If no points in the cluster, keep the centroid unchanged
+
+    return new_centroids
+
+
+def k_means(data, centroids, max_iterations=100):
+    for iteration in range(max_iterations):
+        old_centroids = centroids.copy()
+
+        clusters = assign_to_clusters(data, centroids)
+        centroids = update_centroids(clusters)
+
+        # Check for convergence
+        if old_centroids == centroids:
+            print(f"Converged after {iteration + 1} iterations.")
+            break
+
+    return clusters, centroids
+
+
+# Example usage
+data = [[2, 10], [2, 5], [8, 4], [5, 8], [7, 5], [6, 4], [1, 2], [4, 9]]
+# data = [[0.34, -0.2, 1.13, 4.3], [5.1, -12.6, -7.0, 1.9], [-15.7, 0.06, -7.1, 11.2]]
+centroids = {"centroid1": [2, 10], "centroid2": [7, 5], "centroid3": [1, 2]}
+
+clusters, updated_centroids = k_means(data, centroids)
+
+# Print the final clusters and centroids
+print("Final Clusters:")
+for centroid, points in clusters.items():
+    print(f"{centroid}: {points}")
+
+print("\nUpdated Centroids:")
+for centroid, location in updated_centroids.items():
+    print(f"{centroid}: {location}")
